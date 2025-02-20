@@ -13,5 +13,17 @@ def login():
 def reg():
     return render_template("register.html")
 
+@app.route("/add_book")
+def add_book():
+    return render_template("add_book.html")
+
+@app.route("/edit_book")
+def edit_book():
+    return render_template("edit_book.html")
+
+@app.route("/edit_category")
+def edit_category():
+    return render_template("edit_category.html")
+
 if __name__=="__main__":
     app.run(debug=True)
