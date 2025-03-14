@@ -1,7 +1,10 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template,bcrypt
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_wtf import FlaskForm
+from flask_wtf import StringField,PasswordField,selectField,SubmitField
+from flask import Flask,render_template,redirect,url_for,flash
+from wtForms.Validators import DataRequired
 
 app=Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///library.db'
@@ -35,6 +38,16 @@ class Service(db.Model):
     return_date=db.Column(db.DateTime,nullable=False)
     status=db.Column(db.String(25),default=False)
 
+class studentRegistrationForm(FlaskForm):
+    Username=StringField('Username',validators=[DataRequired()])
+    Password=PasswordField('Password',validators=[DataRequired()])
+    role=selectField('Role',choices=[('user','user')],validators=[DataRequired])
+    submit=SubmitField('Register')
+
+class LoginForm(FlaskForm):
+    username=StringField('Username',validators=[DataRequired])
+    Password=PasswordField('Password',validators=[DataRequired()])
+    submit=SubmitField('Login')
 @app.route('/')
 def home():
 
@@ -63,6 +76,29 @@ def edit_category():
 @app.route("/add_category")
 def add_category():
     return render_template("add_category.html")
+
+@app.route('/register',methods=['GET','POST'])
+def register_user():
+    form=studentRegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        new_user=User(username=form.username.data, password_hash=hashed_password,role='User',is_approved=False)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash(f'Regsitraion successfull for {form.username.data} as a user awaiting for Admin approval','info')
+            return redirect(url_for('login'))
+        except:
+            flash("Error:User Name already Exists",'danger')
+            db.session.rollback()
+    return render_template('register.html',form=form)
+
+@app.route('/Login',method=['GET','POST'])
+def Login_user():
+    form=LoginForm()
+    if form.validate_on_submit():
+        
+
 
 if __name__=="__main__":
     with app.app_context():
