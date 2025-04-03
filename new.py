@@ -121,7 +121,7 @@ def servicerequest():
             if session.get('role')!='user':
                 flash('Access denied. User only','danger')
                 return redirect(url_for('home'))
-User=user.query.get_or_404(user_id)
+user=user.name.query.get_or_404(user.id)
 
 
 @app.route('/Login',method=['GET','POST'])
@@ -132,7 +132,7 @@ def Login_user():
             if session.get('role')!='user':
                 flash('Access denied.User only','danger')
                 return redirect(url_for('home'))
-    user=user.query.get_or_404(user_id)
+    user=user.query.get_or_404(user.id)
     if user.role=='user' and user.is_approved:
         user.is_approved=True
         db.session.commit()
@@ -196,7 +196,7 @@ def addcategory():
         db.session.commit()
         flash('category added')
         try:
-            db.session.add(category)
+            db.session.add(add_category)
             db.session.commit()
             flash('category updated','danger')
             return redirect(url_for('add_category'))
