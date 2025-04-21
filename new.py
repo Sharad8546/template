@@ -83,6 +83,7 @@ def reg():
 
 @app.route("/add_book")
 def add_book():
+
     return render_template("add_book.html")
 
 @app.route("/edit_book")
@@ -91,7 +92,7 @@ def edit_book():
 
 @app.route("/edit_category")
 def edit_category():
-    return render_template("edit_category.html")
+    return render_template("edit_category.html)
 
 @app.route("/add_category")
 def add_category():
